@@ -19,7 +19,7 @@ sys.path.append(os.getcwd())
 @click.argument('function', default=False)
 def cli(command, submodule, function):
     ''' Masonite Command Line Helper Tool '''
-    found = True
+    found = False
 
     try:
         from config import application
@@ -74,9 +74,9 @@ def install():
 
 @group.command()
 @click.option('--port', default='8000')
-def serve():
+def serve(port):
     ''' Runs the application. '''
-    call(["waitress-serve", "wsgi:application", '--port', port])
+    call(["waitress-serve", '--port', port, "wsgi:application"])
 
 @group.command()
 @click.argument('viewname')
@@ -266,3 +266,59 @@ def new(project):
             click.echo('\033[91mCould Not Create Application :(\033[0m')
     else:
         click.echo('\033[91mDirectory {0} already exists. Please choose another project name\033[0m'.format("'"+project+"'"))
+
+@group.command()
+@click.argument('package_name')
+def publish(package_name):
+    ''' Used to run integrations on packages.
+        Can be used to seamlessly integrate config files into your project.
+    '''
+    from config import packages
+
+    # Add additional site packages to vendor if they exist
+    for directory in packages.SITE_PACKAGES:
+        path = os.path.join(os.getcwd(), directory)
+        sys.path.append(path)
+
+    imported_package = importlib.import_module(package_name+'.integration')
+
+    imported_package.boot()
+
+@group.command()
+@click.argument('package_name')
+def package(package_name):
+    ''' Scaffold a new Masonite package.
+        This will scaffold the bare bones of a PyPi project
+        and create the integrations module as well as boot function
+    '''
+    ## create setup.py
+    setup = open(os.path.join(os.getcwd(), 'setup.py'), 'w+')
+    setup.write("from setuptools import setup\n\n")
+    setup.write('setup(\n    ')
+    setup.write('name="{0}",\n    '.format(package_name))
+    setup.write("version='0.0.1',\n    ")
+    setup.write("packages=['{0}'],\n    ".format(package_name))
+    setup.write("install_requires=[\n        ".format(package_name))
+    setup.write("'masonite',\n    ".format(package_name))
+    setup.write("],\n    ".format(package_name))
+    setup.write('include_package_data=True,\n')
+    setup.write(')\n')
+    setup.close()
+
+    manifest = open(os.path.join(os.getcwd(), 'MANIFEST.in'), 'w+')
+    manifest.close()
+
+    if not os.path.exists(package_name):
+        os.makedirs(package_name)
+
+    init_file = open(os.path.join(os.getcwd(), '{0}/{1}'.format(package_name, '__init__.py')), 'w+')
+    init_file.close()
+
+    integration_file = open(os.path.join(os.getcwd(), '{0}/{1}'.format(package_name, 'integration.py')), 'w+')
+
+    integration_file.write('from masonite.packages import create_or_append_config\n')
+    integration_file.write('import os\n\n')
+    integration_file.write('package_directory = os.path.dirname(os.path.realpath(__file__))\n\n')
+    integration_file.write('def boot():\n    pass')
+    integration_file.close()
+    click.echo('\033[92mPackage Created Successfully!\033[0m')
