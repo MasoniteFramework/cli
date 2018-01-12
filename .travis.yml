@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.2"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "3.7-dev"  # 3.7 development branch
+# command to install dependencies
+install:
+  - pip install .
+  - pip install wheel['signatures']
+script: python -m pytest
