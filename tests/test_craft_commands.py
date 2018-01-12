@@ -6,7 +6,7 @@ def test_craft_install():
     subprocess.call(['touch', '.env-example'])
     subprocess.call(['craft', 'install'])
     
-    assert os.path.exists('.env')
+    assert os.path.exists('.env') == True
     
     subprocess.call(['rm', '.env'])
     subprocess.call(['rm', '.env-example'])
