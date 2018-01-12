@@ -73,10 +73,11 @@ def install():
         shutil.copy('.env-example', '.env')
 
 @group.command()
-@click.option('--port', default='8000')
-def serve(port):
+@click.option('--port', default='8000', help='Change the port to run on')
+@click.option('--host', default='127.0.0.1', help='Change the IP address to run on')
+def serve(port, host):
     ''' Runs the application. '''
-    call(["waitress-serve", '--port', port, "wsgi:application"])
+    call(["waitress-serve", '--port', port, "--host", host, "wsgi:application"])
 
 @group.command()
 @click.argument('viewname')
