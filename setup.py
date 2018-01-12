@@ -7,9 +7,6 @@ setup(
     packages=['snippets', 'snippets.auth', 'snippets.auth.controllers', 'snippets.auth.templates.auth'],
     install_requires=[
         'Click',
-        'jsonschema',
-        'wheel',
-        'pytest'
     ],
     include_package_data=True,
     entry_points='''
