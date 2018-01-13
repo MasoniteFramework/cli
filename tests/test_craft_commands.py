@@ -34,9 +34,33 @@ def test_craft_model():
     subprocess.call(['rm', 'testnew/app/TestModel.py'])
 
 def test_craft_migration():
-    print(os.listdir('testnew/databases/migrations'))
     command = subprocess.Popen('cd testnew ; craft migration test_migration --table users',stdout=subprocess.PIPE, shell=True)
     subprocess.Popen.wait(command)
     assert len(os.listdir('testnew/databases/migrations')) > 2
 
+def test_auth():
+    command = subprocess.Popen('cd testnew ; craft auth',stdout=subprocess.PIPE, shell=True)
+    subprocess.Popen.wait(command)
 
+    ## Test auth controllers being added
+    assert os.path.exists('testnew/app/http/controllers/LoginController.py') == True
+    assert os.path.exists('testnew/app/http/controllers/RegisterController.py') == True
+    assert os.path.exists('testnew/app/http/controllers/HomeController.py') == True
+
+    # Test templates
+    assert os.path.exists('testnew/resources/templates/auth/base.html') == True   
+    assert os.path.exists('testnew/resources/templates/auth/home.html') == True   
+    assert os.path.exists('testnew/resources/templates/auth/login.html') == True   
+    assert os.path.exists('testnew/resources/templates/auth/nav.html') == True   
+    assert os.path.exists('testnew/resources/templates/auth/register.html') == True   
+
+def test_package():
+    commandnewpackage = subprocess.Popen('cd testnew ; craft package testpackage',stdout=subprocess.PIPE, shell=True)
+    command = subprocess.Popen('mkdir testpackage; cd testpackage ; craft package testpackage',stdout=subprocess.PIPE, shell=True)
+    subprocess.Popen.wait(commandnewpackage)
+    subprocess.Popen.wait(command)
+
+    assert os.path.exists('testpackage/testpackage/integration.py') == True
+    assert os.path.exists('testpackage/testpackage/__init__.py') == True
+    assert os.path.exists('testpackage/setup.py') == True
+    assert os.path.exists('testpackage/MANIFEST.in') == True

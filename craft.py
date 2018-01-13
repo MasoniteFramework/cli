@@ -128,7 +128,6 @@ def migrate():
     ''' Migrates all migrations into the database '''
     subprocess.call(['orator', 'migrate', '-c', 'config/database.py', '-p', 'databases/migrations', '-f'])
 
-
 @group.command(name="migrate:rollback")
 def migrationrollback():
     ''' Undo all migrations '''
