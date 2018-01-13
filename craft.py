@@ -23,6 +23,11 @@ def cli(command, submodule, function):
 
     try:
         from config import application
+        from config import packages
+        # Add additional site packages to vendor if they exist
+        for directory in packages.SITE_PACKAGES:
+            path = os.path.join(os.getcwd(), directory)
+            sys.path.append(path)
     except ModuleNotFoundError:
         raise Exception('\033[95mThis command must be ran inside your project root directory.\033[0m')
 
