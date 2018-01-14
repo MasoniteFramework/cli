@@ -1,3 +1,7 @@
 masonite_cli.egg-info
 lib
 dist
+venv
+.vscode
+*/*.pyc
+**/*.pyc

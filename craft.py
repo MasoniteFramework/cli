@@ -116,7 +116,12 @@ def controller(controller):
 @click.argument('model')
 def model(model):
     ''' Creates a model '''
+
     if not os.path.isfile('app/' + model + '.py'):
+        if not os.path.exists(os.path.dirname('app/' + model + '.py')):
+            # Create the path to the model if it does not exist
+            os.makedirs(os.path.dirname('app/' + model + '.py'))
+
         f = open('app/' + model + '.py', 'w+')
 
         f.write("''' A " + model + " Database Model '''\n")
