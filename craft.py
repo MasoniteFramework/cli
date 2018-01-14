@@ -127,7 +127,7 @@ def model(model):
         f.write("''' A " + model + " Database Model '''\n")
         f.write('from orator import DatabaseManager, Model\n')
         f.write('from config.database import Model\n\n')
-        f.write("class User(Model):\n    pass\n")
+        f.write("class "+model+"(Model):\n    pass\n")
 
         click.echo('\033[92mModel Created Successfully!\033[0m')
     else:
