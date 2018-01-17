@@ -187,6 +187,13 @@ def deploy(local, current):
     output = subprocess.Popen(
         ['heroku', 'git:remote', '-a', application.NAME.lower()], stdout=subprocess.PIPE).communicate()[0]
     if not output:
+
+        # Python 2.7 support
+        try:
+            input = raw_input
+        except NameError:
+            pass
+
         create_app = input(
             "\n\033[92mApp doesn't exist for this account. Would you like to craft one?\033[0m \n\n[y/n] > ")  # Python 2
         if 'y' in create_app:
