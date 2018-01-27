@@ -339,3 +339,15 @@ def package(package_name):
     integration_file.write('def boot():\n    pass')
     integration_file.close()
     click.echo('\033[92mPackage Created Successfully!\033[0m')
+
+
+@group.command()
+def key():
+    ''' Generates a random secret key.
+        You can use secret keys to encrypt and decrypt anything.
+        Keep this secret!
+    '''
+    from cryptography.fernet import Fernet
+
+    click.echo("\033[92mKEY: {0}\033[0m".format(
+        bytes(Fernet.generate_key()).decode('utf-8')))
