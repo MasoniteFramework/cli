@@ -351,3 +351,26 @@ def key():
 
     click.echo("\033[92mKEY: {0}\033[0m".format(
         bytes(Fernet.generate_key()).decode('utf-8')))
+
+
+@group.command()
+@click.argument('provider')
+def provider(provider):
+    ''' Creates a model '''
+
+    if not os.path.isfile('app/providers/' + provider + '.py'):
+        if not os.path.exists(os.path.dirname('app/providers/' + provider + '.py')):
+            # Create the path to the model if it does not exist
+            os.makedirs(os.path.dirname('app/providers/' + provider + '.py'))
+
+        f = open('app/providers/' + provider + '.py', 'w+')
+
+        f.write("''' A " + provider + " Service Provider '''\n")
+        f.write('from masonite.provider import ServiceProvider\n\n')
+        f.write("class "+provider+"(ServiceProvider):\n\n    ")
+        f.write("def register(self):    \n        pass\n\n    ")
+        f.write("def boot(self):    \n        pass\n")
+
+        click.echo('\033[92mModel Created Successfully!\033[0m')
+    else:
+        click.echo('\033[95mService Provider Already Exists!\033[0m')

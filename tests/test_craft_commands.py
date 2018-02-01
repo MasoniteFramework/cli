@@ -64,3 +64,11 @@ def test_package():
     assert os.path.exists('testpackage/testpackage/__init__.py') == True
     assert os.path.exists('testpackage/setup.py') == True
     assert os.path.exists('testpackage/MANIFEST.in') == True
+
+def test_create_service_provider():
+    commandnewprovider = subprocess.Popen(
+        'cd testnew ; craft provider TestServiceProvider', stdout=subprocess.PIPE, shell=True)
+    subprocess.Popen.wait(commandnewprovider)
+
+    assert os.path.exists('testnew/app/providers/TestServiceProvider.py') == True
+
