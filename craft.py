@@ -371,6 +371,6 @@ def provider(provider):
         f.write("def register(self):    \n        pass\n\n    ")
         f.write("def boot(self):    \n        pass\n")
 
-        click.echo('\033[92mModel Created Successfully!\033[0m')
+        click.echo('\033[92mService Provider Created Successfully!\033[0m')
     else:
         click.echo('\033[95mService Provider Already Exists!\033[0m')
