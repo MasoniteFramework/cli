@@ -368,8 +368,8 @@ def provider(provider):
         f.write("''' A " + provider + " Service Provider '''\n")
         f.write('from masonite.provider import ServiceProvider\n\n')
         f.write("class "+provider+"(ServiceProvider):\n\n    ")
-        f.write("def register(self):    \n        pass\n\n    ")
-        f.write("def boot(self):    \n        pass\n")
+        f.write("def register(self):\n        pass\n\n    ")
+        f.write("def boot(self):\n        pass\n")
 
         click.echo('\033[92mService Provider Created Successfully!\033[0m')
     else:
