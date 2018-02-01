@@ -356,7 +356,7 @@ def key():
 @group.command()
 @click.argument('provider')
 def provider(provider):
-    ''' Creates a model '''
+    ''' Creates a Service Provider'''
 
     if not os.path.isfile('app/providers/' + provider + '.py'):
         if not os.path.exists(os.path.dirname('app/providers/' + provider + '.py')):
