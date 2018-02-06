@@ -3,6 +3,8 @@ from masonite.view import view
 from masonite.facades.Auth import Auth
 from config import application
 from config import auth
+import bcrypt
+
 
 class RegisterController(object):
     ''' Class Docstring Description '''
@@ -16,11 +18,14 @@ class RegisterController(object):
 
     def store(self, request):
         ''' Register a new user '''
-
         # register the user
+        password = bcrypt.hashpw(
+                bytes(request.input('password'), 'utf-8'), bcrypt.gensalt()
+            )
+
         auth.AUTH['model'].create(
             name=request.input('name'),
-            password=request.input('password'),
+            password=password,
             email=request.input('email'),
         )
 

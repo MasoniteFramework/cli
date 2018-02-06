@@ -187,6 +187,13 @@ def deploy(local, current):
     output = subprocess.Popen(
         ['heroku', 'git:remote', '-a', application.NAME.lower()], stdout=subprocess.PIPE).communicate()[0]
     if not output:
+
+        # Python 2.7 support
+        try:
+            input = raw_input
+        except NameError:
+            pass
+
         create_app = input(
             "\n\033[92mApp doesn't exist for this account. Would you like to craft one?\033[0m \n\n[y/n] > ")  # Python 2
         if 'y' in create_app:
@@ -332,3 +339,38 @@ def package(package_name):
     integration_file.write('def boot():\n    pass')
     integration_file.close()
     click.echo('\033[92mPackage Created Successfully!\033[0m')
+
+
+@group.command()
+def key():
+    ''' Generates a random secret key.
+        You can use secret keys to encrypt and decrypt anything.
+        Keep this secret!
+    '''
+    from cryptography.fernet import Fernet
+
+    click.echo("\033[92mKEY: {0}\033[0m".format(
+        bytes(Fernet.generate_key()).decode('utf-8')))
+
+
+@group.command()
+@click.argument('provider')
+def provider(provider):
+    ''' Creates a Service Provider'''
+
+    if not os.path.isfile('app/providers/' + provider + '.py'):
+        if not os.path.exists(os.path.dirname('app/providers/' + provider + '.py')):
+            # Create the path to the model if it does not exist
+            os.makedirs(os.path.dirname('app/providers/' + provider + '.py'))
+
+        f = open('app/providers/' + provider + '.py', 'w+')
+
+        f.write("''' A " + provider + " Service Provider '''\n")
+        f.write('from masonite.provider import ServiceProvider\n\n')
+        f.write("class "+provider+"(ServiceProvider):\n\n    ")
+        f.write("def register(self):\n        pass\n\n    ")
+        f.write("def boot(self):\n        pass\n")
+
+        click.echo('\033[92mService Provider Created Successfully!\033[0m')
+    else:
+        click.echo('\033[95mService Provider Already Exists!\033[0m')
