@@ -12,26 +12,26 @@ class RegisterController(object):
     def __init__(self):
         pass
 
-    def show(self, request):
+    def show(self, Request):
         ''' Show the registration page '''
-        return view('auth/register', {'app': application, 'Auth': Auth(request)})
+        return view('auth/register', {'app': application, 'Auth': Auth(Request)})
 
-    def store(self, request):
+    def store(self, Request):
         ''' Register a new user '''
         # register the user
         password = bcrypt.hashpw(
-                bytes(request.input('password'), 'utf-8'), bcrypt.gensalt()
+                bytes(Request.input('password'), 'utf-8'), bcrypt.gensalt()
             )
 
         auth.AUTH['model'].create(
-            name=request.input('name'),
+            name=Request.input('name'),
             password=password,
-            email=request.input('email'),
+            email=Request.input('email'),
         )
 
         # login the user
         # redirect to the homepage
-        if Auth(request).login(request.input(auth.AUTH['model'].__auth__), request.input('password')):
-            return request.redirect('/home')
+        if Auth(Request).login(Request.input(auth.AUTH['model'].__auth__), Request.input('password')):
+            return Request.redirect('/home')
 
-        return request.redirect('/register')
+        return Request.redirect('/register')

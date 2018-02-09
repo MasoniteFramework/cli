@@ -9,7 +9,7 @@ class HomeController(object):
     def __init__(self):
         pass
 
-    def show(self, request):
-        if not Auth(request).user():
-            request.redirect('/login')
-        return view('auth/home', {'app': application, 'Auth': Auth(request)})
+    def show(self, Request):
+        if not Auth(Request).user():
+            Request.redirect('/login')
+        return view('auth/home', {'app': application, 'Auth': Auth(Request)})
