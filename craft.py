@@ -247,14 +247,40 @@ def auth():
 
 @group.command()
 @click.argument('project')
-def new(project):
+@click.option('--branch', default=False, help='Create a new project from a branch')
+@click.option('--version', default=False, help='Creates a new project from a version')
+def new(project, branch, version):
     ''' Creates a new project '''
     if not os.path.isdir(os.getcwd() + '/' + project):
         click.echo('\033[92mCrafting Application ...\033[0m')
+        from io import BytesIO
+        import requests
+
+        if branch:
+            get_branch = requests.get(
+                'https://api.github.com/repos/josephmancuso/masonite-starter/branches/{0}'.format(branch))
+            
+            if not 'name' in get_branch.json():
+                return click.echo('\033[91mBranch "{0} does not exist.\033[0m'.format(branch))
+
+            zipball = 'http://github.com/josephmancuso/masonite-starter/archive/{0}.zip'.format(branch)
+        elif version:
+            get_zip_url = requests.get(
+                'https://api.github.com/repos/josephmancuso/masonite-starter/releases/tags/v{0}'.format(version))
+
+            try:
+                zipball = get_zip_url.json()['zipball_url']
+            except:
+                return click.echo('\033[91mVersion {0} does not exist.\033[0m'.format(version))
+        else:
+            get_zip_url = requests.get(
+                'https://api.github.com/repos/josephmancuso/masonite-starter/releases/latest')
+            
+            zipball = get_zip_url.json()['zipball_url']
 
         success = False
-        from io import BytesIO
-        zipurl = 'http://github.com/josephmancuso/masonite-starter/archive/master.zip'
+        
+        zipurl = zipball
 
         try:
             # Python 3
@@ -277,8 +303,10 @@ def new(project):
         # rename file
 
         if success:
-            os.rename(os.getcwd() + '/masonite-starter-master', os.getcwd() + '/' +project)
-            click.echo('\033[92m\nApplication Created Successfully!\n\nNow just cd into your project and run\n\n    $ craft install\n\nto install the project dependencies.\n\nCreate Something Amazing!\033[0m')
+            for directory in os.listdir(os.getcwd()):
+                if directory.startswith('josephmancuso-masonite') or directory.startswith('masonite-starter'):
+                    os.rename(os.getcwd() + '/{0}'.format(directory), os.getcwd() + '/' +project)
+                    click.echo('\033[92m\nApplication Created Successfully!\n\nNow just cd into your project and run\n\n    $ craft install\n\nto install the project dependencies.\n\nCreate Something Amazing!\033[0m')
         else:
             click.echo('\033[91mCould Not Create Application :(\033[0m')
     else:
