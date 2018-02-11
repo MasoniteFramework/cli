@@ -258,15 +258,15 @@ def new(project, branch, version):
 
         if branch:
             get_branch = requests.get(
-                'https://api.github.com/repos/josephmancuso/masonite/branches/{0}'.format(branch))
+                'https://api.github.com/repos/MasoniteFramework/masonite/branches/{0}'.format(branch))
             
             if not 'name' in get_branch.json():
                 return click.echo('\033[91mBranch "{0} does not exist.\033[0m'.format(branch))
 
-            zipball = 'http://github.com/josephmancuso/masonite/archive/{0}.zip'.format(branch)
+            zipball = 'http://github.com/MasoniteFramework/masonite/archive/{0}.zip'.format(branch)
         elif version:
             get_zip_url = requests.get(
-                'https://api.github.com/repos/josephmancuso/masonite/releases/tags/v{0}'.format(version))
+                'https://api.github.com/repos/MasoniteFramework/masonite/releases/tags/v{0}'.format(version))
 
             try:
                 zipball = get_zip_url.json()['zipball_url']
@@ -274,7 +274,7 @@ def new(project, branch, version):
                 return click.echo('\033[91mVersion {0} does not exist.\033[0m'.format(version))
         else:
             get_zip_url = requests.get(
-                'https://api.github.com/repos/josephmancuso/masonite/releases/latest')
+                'https://api.github.com/repos/MasoniteFramework/masonite/releases/latest')
             
             zipball = get_zip_url.json()['zipball_url']
 
@@ -304,7 +304,7 @@ def new(project, branch, version):
 
         if success:
             for directory in os.listdir(os.getcwd()):
-                if directory.startswith('josephmancuso-masonite') or directory.startswith('masonite-starter'):
+                if directory.startswith('MasoniteFramework-masonite') or directory.startswith('masonite-'):
                     os.rename(os.getcwd() + '/{0}'.format(directory), os.getcwd() + '/' +project)
                     click.echo('\033[92m\nApplication Created Successfully!\n\nNow just cd into your project and run\n\n    $ craft install\n\nto install the project dependencies.\n\nCreate Something Amazing!\033[0m')
         else:

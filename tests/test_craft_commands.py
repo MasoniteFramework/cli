@@ -12,14 +12,14 @@ def test_craft_install():
     subprocess.call(['rm', '.env-example'])
 
 def test_craft_new():
-    subprocess.call(['craft', 'new', 'testnew'])
+    command = subprocess.call(['craft', 'new', 'testnew'])
     assert os.path.exists('testnew') == True
 
-    subprocess.call(['craft', 'new', 'testnewversion', '--version', '1.2.0'])
+    command = subprocess.call(['craft', 'new', 'testnewversion', '--version', '1.2.0'])
     assert os.path.exists('testnewversion') == True
 
     
-    subprocess.call(['craft', 'new', 'testnewmaster', '--branch', 'master'])
+    command = subprocess.call(['craft', 'new', 'testnewmaster', '--branch', 'master'])
     assert os.path.exists('testnewmaster') == True
 
 
