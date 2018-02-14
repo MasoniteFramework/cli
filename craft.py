@@ -103,8 +103,7 @@ def controller(controller):
         click.echo('\033[95m' + controller + ' Controller Exists!' + '\033[0m')
     else:
         f = open('app/http/controllers/' + controller + '.py', 'w+')
-        f.write("''' A Module Description '''\n")
-        f.write('from masonite.view import view\n\n')
+        f.write("''' A Module Description '''\n\n")
         f.write('class ' + controller + '(object):\n')
         f.write("    ''' Class Docstring Description '''\n\n")
         f.write('    def __init__(self):\n')
