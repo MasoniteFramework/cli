@@ -387,7 +387,7 @@ def provider(provider):
 
     if not os.path.isfile('app/providers/' + provider + '.py'):
         if not os.path.exists(os.path.dirname('app/providers/' + provider + '.py')):
-            # Create the path to the model if it does not exist
+            # Create the path to the service provider if it does not exist
             os.makedirs(os.path.dirname('app/providers/' + provider + '.py'))
 
         f = open('app/providers/' + provider + '.py', 'w+')
@@ -401,3 +401,25 @@ def provider(provider):
         click.echo('\033[92mService Provider Created Successfully!\033[0m')
     else:
         click.echo('\033[95mService Provider Already Exists!\033[0m')
+
+@group.command()
+@click.argument('job_name')
+def job(job_name):
+    ''' Creates a Queueable Job '''
+
+    if not os.path.isfile('app/jobs/' + job_name + '.py'):
+        if not os.path.exists(os.path.dirname('app/jobs/' + job_name + '.py')):
+            # Create the path to the job if it does not exist
+            os.makedirs(os.path.dirname('app/jobs/' + job_name + '.py'))
+
+        f = open('app/jobs/' + job_name + '.py', 'w+')
+
+        f.write("''' A " + job_name + " Queue Job '''\n\n")
+        f.write('from masonite.queues.Queueable import Queueable\n\n')
+        f.write("class "+job_name+"(Queueable):\n\n    ")
+        f.write("def __init__(self):\n        pass\n\n    ")
+        f.write("def handle(self):\n        pass\n")
+
+        click.echo('\033[92mJob Created Successfully!\033[0m')
+    else:
+        click.echo('\033[95mJob Already Exists!\033[0m')
