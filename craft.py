@@ -124,7 +124,6 @@ def model(model):
         f = open('app/' + model + '.py', 'w+')
 
         f.write("''' A " + model + " Database Model '''\n")
-        f.write('from orator import DatabaseManager, Model\n')
         f.write('from config.database import Model\n\n')
         f.write("class "+model+"(Model):\n    pass\n")
 
