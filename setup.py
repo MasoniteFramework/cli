@@ -4,7 +4,12 @@ setup(
     name="masonite-cli",
     version='1.0.0',
     py_modules=['craft'],
-    packages=['snippets', 'snippets.auth', 'snippets.auth.controllers', 'snippets.auth.templates.auth'],
+    packages=[
+        'snippets',
+        'snippets.auth',
+        'snippets.auth.controllers',
+        'snippets.auth.templates.auth'
+    ],
     install_requires=[
         'Click',
         'cryptography==2.1.4',
