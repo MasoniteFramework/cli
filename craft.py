@@ -106,7 +106,7 @@ def controller(controller):
         f.write("''' A Module Description '''\n\n")
         f.write('class ' + controller + '(object):\n')
         f.write("    ''' Class Docstring Description '''\n\n")
-        f.write('    def __init__(self):\n')
+        f.write('    def show(self):\n')
         f.write('        pass\n')
 
         click.echo('\033[92m' + controller + ' Created Successfully!' + '\033[0m')
