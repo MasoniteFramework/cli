@@ -1,5 +1,4 @@
 ''' A Module Description '''
-from masonite.view import view
 from masonite.facades.Auth import Auth
 from config import application
 
@@ -10,17 +9,17 @@ class LoginController(object):
     def __init__(self):
         pass
 
-    def show(self, request):
+    def show(self, Request):
         ''' Return the login page '''
-        return view('auth/login', {'app': application, 'Auth': Auth(request)})
+        return view('auth/login', {'app': application, 'Auth': Auth(Request)})
 
-    def store(self, request):
-        if Auth(request).login(request.input('username'), request.input('password')):
-            request.redirect('/home')
+    def store(self, Request):
+        if Auth(Request).login(Request.input('username'), Request.input('password')):
+            Request.redirect('/home')
         else:
-            request.redirect('/login')
+            Request.redirect('/login')
         return 'check terminal'
 
-    def logout(self, request):
-        Auth(request).logout()
-        return request.redirect('/login')
+    def logout(self, Request):
+        Auth(Request).logout()
+        return Request.redirect('/login')

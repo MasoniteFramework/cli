@@ -12,8 +12,17 @@ def test_craft_install():
     subprocess.call(['rm', '.env-example'])
 
 def test_craft_new():
-    subprocess.call(['craft', 'new', 'testnew'])
+    command = subprocess.call(['craft', 'new', 'testnew'])
     assert os.path.exists('testnew') == True
+
+    command = subprocess.call(['craft', 'new', 'testnewversion', '--version', '1.2.0'])
+    assert os.path.exists('testnewversion') == True
+
+    
+    command = subprocess.call(['craft', 'new', 'testnewmaster', '--branch', 'master'])
+    assert os.path.exists('testnewmaster') == True
+
+
 
 def test_craft_view():
     command = subprocess.Popen('cd testnew ; craft view test',stdout=subprocess.PIPE, shell=True)
@@ -36,7 +45,7 @@ def test_craft_model():
 def test_craft_migration():
     command = subprocess.Popen('cd testnew ; craft migration test_migration --table users',stdout=subprocess.PIPE, shell=True)
     subprocess.Popen.wait(command)
-    assert len(os.listdir('testnew/databases/migrations')) > 2
+    assert len(os.listdir('testnew/databases/migrations')) >= 2
 
 def test_auth():
     command = subprocess.Popen('cd testnew ; craft auth',stdout=subprocess.PIPE, shell=True)

@@ -103,11 +103,10 @@ def controller(controller):
         click.echo('\033[95m' + controller + ' Controller Exists!' + '\033[0m')
     else:
         f = open('app/http/controllers/' + controller + '.py', 'w+')
-        f.write("''' A Module Description '''\n")
-        f.write('from masonite.view import view\n\n')
+        f.write("''' A Module Description '''\n\n")
         f.write('class ' + controller + '(object):\n')
         f.write("    ''' Class Docstring Description '''\n\n")
-        f.write('    def __init__(self):\n')
+        f.write('    def show(self):\n')
         f.write('        pass\n')
 
         click.echo('\033[92m' + controller + ' Created Successfully!' + '\033[0m')
@@ -125,7 +124,6 @@ def model(model):
         f = open('app/' + model + '.py', 'w+')
 
         f.write("''' A " + model + " Database Model '''\n")
-        f.write('from orator import DatabaseManager, Model\n')
         f.write('from config.database import Model\n\n')
         f.write("class "+model+"(Model):\n    pass\n")
 
@@ -247,14 +245,40 @@ def auth():
 
 @group.command()
 @click.argument('project')
-def new(project):
+@click.option('--branch', default=False, help='Create a new project from a branch')
+@click.option('--version', default=False, help='Creates a new project from a version')
+def new(project, branch, version):
     ''' Creates a new project '''
     if not os.path.isdir(os.getcwd() + '/' + project):
         click.echo('\033[92mCrafting Application ...\033[0m')
+        from io import BytesIO
+        import requests
+
+        if branch:
+            get_branch = requests.get(
+                'https://api.github.com/repos/MasoniteFramework/masonite/branches/{0}'.format(branch))
+            
+            if not 'name' in get_branch.json():
+                return click.echo('\033[91mBranch "{0} does not exist.\033[0m'.format(branch))
+
+            zipball = 'http://github.com/MasoniteFramework/masonite/archive/{0}.zip'.format(branch)
+        elif version:
+            get_zip_url = requests.get(
+                'https://api.github.com/repos/MasoniteFramework/masonite/releases/tags/v{0}'.format(version))
+
+            try:
+                zipball = get_zip_url.json()['zipball_url']
+            except:
+                return click.echo('\033[91mVersion {0} does not exist.\033[0m'.format(version))
+        else:
+            get_zip_url = requests.get(
+                'https://api.github.com/repos/MasoniteFramework/masonite/releases/latest')
+            
+            zipball = get_zip_url.json()['zipball_url']
 
         success = False
-        from io import BytesIO
-        zipurl = 'http://github.com/josephmancuso/masonite-starter/archive/master.zip'
+        
+        zipurl = zipball
 
         try:
             # Python 3
@@ -277,8 +301,10 @@ def new(project):
         # rename file
 
         if success:
-            os.rename(os.getcwd() + '/masonite-starter-master', os.getcwd() + '/' +project)
-            click.echo('\033[92m\nApplication Created Successfully!\n\nNow just cd into your project and run\n\n    $ craft install\n\nto install the project dependencies.\n\nCreate Something Amazing!\033[0m')
+            for directory in os.listdir(os.getcwd()):
+                if directory.startswith('MasoniteFramework-masonite') or directory.startswith('masonite-'):
+                    os.rename(os.getcwd() + '/{0}'.format(directory), os.getcwd() + '/' +project)
+                    click.echo('\033[92m\nApplication Created Successfully!\n\nNow just cd into your project and run\n\n    $ craft install\n\nto install the project dependencies.\n\nCreate Something Amazing!\033[0m')
         else:
             click.echo('\033[91mCould Not Create Application :(\033[0m')
     else:
@@ -315,9 +341,9 @@ def package(package_name):
     setup.write('name="{0}",\n    '.format(package_name))
     setup.write("version='0.0.1',\n    ")
     setup.write("packages=['{0}'],\n    ".format(package_name))
-    setup.write("install_requires=[\n        ".format(package_name))
-    setup.write("'masonite',\n    ".format(package_name))
-    setup.write("],\n    ".format(package_name))
+    setup.write("install_requires=[\n        ")
+    setup.write("'masonite',\n    ")
+    setup.write("],\n    ")
     setup.write('include_package_data=True,\n')
     setup.write(')\n')
     setup.close()
@@ -360,7 +386,7 @@ def provider(provider):
 
     if not os.path.isfile('app/providers/' + provider + '.py'):
         if not os.path.exists(os.path.dirname('app/providers/' + provider + '.py')):
-            # Create the path to the model if it does not exist
+            # Create the path to the service provider if it does not exist
             os.makedirs(os.path.dirname('app/providers/' + provider + '.py'))
 
         f = open('app/providers/' + provider + '.py', 'w+')
@@ -374,3 +400,25 @@ def provider(provider):
         click.echo('\033[92mService Provider Created Successfully!\033[0m')
     else:
         click.echo('\033[95mService Provider Already Exists!\033[0m')
+
+@group.command()
+@click.argument('job_name')
+def job(job_name):
+    ''' Creates a Queueable Job '''
+
+    if not os.path.isfile('app/jobs/' + job_name + '.py'):
+        if not os.path.exists(os.path.dirname('app/jobs/' + job_name + '.py')):
+            # Create the path to the job if it does not exist
+            os.makedirs(os.path.dirname('app/jobs/' + job_name + '.py'))
+
+        f = open('app/jobs/' + job_name + '.py', 'w+')
+
+        f.write("''' A " + job_name + " Queue Job '''\n\n")
+        f.write('from masonite.queues.Queueable import Queueable\n\n')
+        f.write("class "+job_name+"(Queueable):\n\n    ")
+        f.write("def __init__(self):\n        pass\n\n    ")
+        f.write("def handle(self):\n        pass\n")
+
+        click.echo('\033[92mJob Created Successfully!\033[0m')
+    else:
+        click.echo('\033[95mJob Already Exists!\033[0m')
