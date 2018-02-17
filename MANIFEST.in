@@ -1,1 +1,2 @@
-include snippets/auth/templates/auth/*
+include masonite_snippets/auth/controllers/*
+include masonite_snippets/auth/templates/auth/*
