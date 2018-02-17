@@ -230,15 +230,15 @@ def auth():
     f.write(']\n')
 
     # move controllers
-    shutil.copyfile(module_path+"/snippets/auth/controllers/LoginController.py",
+    shutil.copyfile(module_path+"/masonite_snippets/auth/controllers/LoginController.py",
                     os.getcwd()+"/app/http/controllers/LoginController.py")
-    shutil.copyfile(module_path+"/snippets/auth/controllers/RegisterController.py",
+    shutil.copyfile(module_path+"/masonite_snippets/auth/controllers/RegisterController.py",
                     os.getcwd()+"/app/http/controllers/RegisterController.py")
-    shutil.copyfile(module_path+"/snippets/auth/controllers/HomeController.py",
+    shutil.copyfile(module_path+"/masonite_snippets/auth/controllers/HomeController.py",
                     os.getcwd()+"/app/http/controllers/HomeController.py")
 
     # move templates
-    shutil.copytree(module_path + "/snippets/auth/templates/auth",
+    shutil.copytree(module_path + "/masonite_snippets/auth/templates/auth",
                     os.getcwd()+"/resources/templates/auth")
     
     click.echo('\n\033[92mProject Scaffolded. You now have 4 new controllers, 5 new templates and 6 new routes\033[0m\n')
@@ -250,9 +250,12 @@ def auth():
 def new(project, branch, version):
     ''' Creates a new project '''
     if not os.path.isdir(os.getcwd() + '/' + project):
-        click.echo('\033[92mCrafting Application ...\033[0m')
         from io import BytesIO
         import requests
+
+        for directory in os.listdir(os.getcwd()):
+            if directory.startswith('masonite-'):
+                return click.echo('\033[91mThere is a folder that starts with "masonite-" and therefore craft cannot create a new project.\033[0m')
 
         if branch:
             get_branch = requests.get(
@@ -279,6 +282,8 @@ def new(project, branch, version):
         success = False
         
         zipurl = zipball
+
+        click.echo('\033[92mCrafting Application ...\033[0m')
 
         try:
             # Python 3
