@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="masonite-cli",
-    version='1.0.3',
+    version='1.0.4',
     py_modules=['craft'],
     packages=[
         'masonite_snippets'

@@ -76,6 +76,9 @@ def install():
     # create the .env file if it does not exist
     if not os.path.isfile('.env'):
         shutil.copy('.env-example', '.env')
+    
+    call(["craft", "key", "--store"])
+    
 
 @group.command()
 @click.option('--port', default='8000', help='Change the port to run on')
@@ -373,16 +376,33 @@ def package(package_name):
 
 
 @group.command()
-def key():
+@click.option('--store', default=False, is_flag=True, help='Change the port to run on')
+def key(store):
     ''' Generates a random secret key.
         You can use secret keys to encrypt and decrypt anything.
         Keep this secret!
     '''
     from cryptography.fernet import Fernet
 
-    click.echo("\033[92mKEY: {0}\033[0m".format(
-        bytes(Fernet.generate_key()).decode('utf-8')))
+    key = bytes(Fernet.generate_key()).decode('utf-8')
+    
+    if store:
+        with open('.env', 'r') as file:
+            # read a list of lines into data
+            data = file.readlines()
 
+        # change the line that starts with KEY=
+        for line_number, line in enumerate(data):
+            if line.startswith('KEY='):
+                data[line_number] = 'KEY={0}\n'.format(key)
+
+        # and write everything back
+        with open('.env', 'w') as file:
+            file.writelines(data)
+        
+        click.echo("\033[92mKEY Added To Your .env File: {0}\033[0m".format(key))
+    else:
+        click.echo("\033[92mKEY: {0}\033[0m".format(key))
 
 @group.command()
 @click.argument('provider')
