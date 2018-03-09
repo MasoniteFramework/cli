@@ -7,6 +7,8 @@
                 <div class="panel-heading">Login</div>
                 <div class="panel-body">
                 <form action="/login" method="POST">
+                    {{ csrf_field|safe }}
+
                     <div class="form-group">
                         <label for="">Username</label>
                         <input type="text" name="username" class="form-control">    

@@ -6,7 +6,8 @@
         <div class="panel-heading">Register</div>
         <div class="panel-body">
         <form action="/register" method="POST">
-        
+            {{ csrf_field|safe }}
+
             <div class="form-group">
                 <label for="">Username</label>
                 <input type="text" name="name" class="form-control">
