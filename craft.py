@@ -395,6 +395,7 @@ def key(store):
         for line_number, line in enumerate(data):
             if line.startswith('KEY='):
                 data[line_number] = 'KEY={0}\n'.format(key)
+                break
 
         # and write everything back
         with open('.env', 'w') as file:
